@@ -18,4 +18,51 @@ file_list_column = [
     ],
 
 ]
-# For now we will show onlu the name of the chosen files
+# For now we will only show the name of the chosen file
+image_viewer_column = [
+    [sg.Text("Choose an image from the list on the left:")],
+    [sg.Text(size=(40, 1), key="-TOUT-")],
+    [sg.Image(key="-IMAGE-")]
+
+]
+
+layout = [
+    [
+        sg.Column(file_list_column),
+        sg.VSeparator(),
+        sg.Column(image_viewer_column),
+
+    ]
+]
+window = sg.Window("Image Viewer", layout)
+while True:
+    event, values = window.read()
+
+    if event == "EXIT" or event == sg.WIN_CLOSED:
+        break
+
+    if event == "-FOLDER-":
+        folder = values["-FOLDER-"]
+        try:
+            file_list = os.listdir(folder)
+        except:
+            file_list = []
+        fnames = [
+            f
+            for f in file_list
+            if os.path.isfile(os.path.join(folder, f))
+               and f.lower().endswith((".png", ".gif"))
+        ]
+        window["-FILE LIST-"].update(fnames)
+
+    elif event == "-FILE LIST-":
+        try:
+            filename = os.path.join(
+
+                values["-FOLDER-"], values["-FILE LIST-"][0]
+            )
+            window["-TOUT-"].update(filename)
+            window["-IMAGE-"].update(filename=filename)
+
+        except:
+            pass
